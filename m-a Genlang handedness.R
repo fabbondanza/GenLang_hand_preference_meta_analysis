@@ -295,3 +295,4 @@ forest(meta.LOR_COMBINED_Female, comb.fixed = F, comb.random = T, print.zval = T
 funnel(meta.LOR_RD, comb.fixed = F,backtransf = F, main = "Funnel plot of Standard Error by Log odds ratio Left Hand RD", studlab = T )
 funnel(meta.LOR_SLI, comb.fixed =F ,backtransf = F, main = "Funnel plot of Standard Error by Log odds ratio Left Hand SLI", studlab = T)
 funnel(meta.LOR_COMBINED, comb.fixed = F,backtransf = F, title = "Funnel plot of Standard Error by Log odds ratio Left Hand SLI", studlab = T, cex.studlab = 0.7)
+
