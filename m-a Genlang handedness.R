@@ -8,49 +8,49 @@ library(metafor)
 
 # Read file #####
 LOR_SLI <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'SLI-All') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`SLI Left-Handers`/(`SLI Total N` - `SLI Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_SLI_Female <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'SLI-Female') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`SLI Left-Handers`/(`SLI Total N` - `SLI Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_SLI_Male <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'SLI-Male') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`SLI Left-Handers`/(`SLI Total N` - `SLI Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 
 LOR_RD <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'RD-All') %>%
   filter(Study != 'NTR') %>% 
   filter(Study != 'York_ALSPAC') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`RD Left-Handers`/(`RD Total N` - `RD Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_RD_Male <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'RD-Male') %>%
-  filter(Study != 'NTR') %>% 
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  filter(Study != 'NTR') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`RD Left-Handers`/(`RD Total N` - `RD Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_RD_Female <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'RD-Female') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   filter(Study != 'NTR') %>%
   mutate(OR = (`RD Left-Handers`/(`RD Total N` - `RD Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 
 LOR_COMBINED <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'Combined2') %>%
   filter(Study != 'Peters') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   filter(Study != 'York_ALSPAC') %>%
   mutate(OR = (`Combined Left-Handers`/(`Combined Total N` - `Combined Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_COMBINED_Female <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'Combined-Female2') %>%
   filter(Study != 'Peters') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`Combined Left-Handers`/(`Combined Total N` - `Combined Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 LOR_COMBINED_Male <- read_xlsx('genlang_all_cohorts_updated.xlsx', sheet = 'Combined-Male2') %>%
   filter(Study != 'Peters') %>%
-  filter(Study != 'Manchester', Study != 'UKDYS') %>%
+  # filter(Study != 'Manchester', Study != 'UKDYS') %>%
   mutate(OR = (`Combined Left-Handers`/(`Combined Total N` - `Combined Left-Handers`))/(`TD Left-Handers`/(`TD Total N`-`TD Left-Handers`)) )
 
 
@@ -252,16 +252,16 @@ metabias(meta.LOR_COMBINED, method.bias = "linreg", k = 8) # > can't run for N<1
 
 # Print summaries ####
 summary(meta.LOR_RD)
-summary(meta.LOR_RD_Female)
 summary(meta.LOR_RD_Male)
+summary(meta.LOR_RD_Female)
 
 summary(meta.LOR_SLI)
-summary(meta.LOR_SLI_Female)
 summary(meta.LOR_SLI_Male)
+summary(meta.LOR_SLI_Female)
 
 summary(meta.LOR_COMBINED)
-summary(meta.LOR_COMBINED_Female)
 summary(meta.LOR_COMBINED_Male)
+summary(meta.LOR_COMBINED_Female)
 
 
 # print(robumeta::robu(formula = OR ~ Cohort, data = LOR_COMBINED, studynum = study, var.eff.size = variance_100, modelweights = "CORR", small = FALSE))
@@ -283,6 +283,7 @@ forest(meta.LOR_SLI_Male, comb.fixed = F, comb.random = T, print.zval = T, print
 forest(meta.LOR_SLI_Female, comb.fixed = F, comb.random = T, print.zval = T, print.pval.Q = T, print.I2.ci = T,
        print.tau.ci = T, prediction = F, overall = T, smlab = "Females",lab.e = "Language impairment")
 
+
 forest(meta.LOR_COMBINED, comb.fixed = F, comb.random = T, print.pval.Q = T, print.I2.ci = T, lab.e = 'Combined cases',
        prediction = F, overall = T, smlab = "All", subgroup = T, col.by = 'black')
 forest(meta.LOR_COMBINED_Male, comb.fixed = F, comb.random = T, print.pval.Q = T, print.I2.ci = T, lab.e = 'Combined cases',
@@ -295,4 +296,5 @@ forest(meta.LOR_COMBINED_Female, comb.fixed = F, comb.random = T, print.zval = T
 funnel(meta.LOR_RD, comb.fixed = F,backtransf = F, main = "Funnel plot of Standard Error by Log odds ratio Left Hand RD", studlab = T )
 funnel(meta.LOR_SLI, comb.fixed =F ,backtransf = F, main = "Funnel plot of Standard Error by Log odds ratio Left Hand SLI", studlab = T)
 funnel(meta.LOR_COMBINED, comb.fixed = F,backtransf = F, title = "Funnel plot of Standard Error by Log odds ratio Left Hand SLI", studlab = T, cex.studlab = 0.7)
+
 
