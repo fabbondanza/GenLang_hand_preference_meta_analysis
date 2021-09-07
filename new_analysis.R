@@ -20,6 +20,7 @@ All_studies <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xlsx'
   mutate(Full_cohort = paste(cohort_name, phenotype, sex, sep = "_")) %>%
   filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
   filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
+  filter(cohort_name != "Toronto cohort") %>% # This study did not have enough samples males/females controls
   escalc(measure = "OR", ai = cases_NRH, bi = cases_RH, ci = controls_NRH, di = controls_RH, data = ., append = T, drop00 = T) %>%
   mutate(across(cohort_type:sex, as.factor)) %>% # Create factors for better analysis
   filter(complete.cases(.$yi)) %>% # This is to remove values with empty OR as the cases/controls contain at least a cell with < 5
