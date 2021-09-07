@@ -1,0 +1,63 @@
+library(tidyverse)
+library(readxl)
+library(metafor)
+
+# Read file #####
+
+# This is the analysis suggested by Dorothy which have only 1 m-a with moderators (sex, pheontype, cohort type)
+
+path <- "~/University of St Andrews/Silvia Paracchini - gen_lang_hand_meta/GenLang_hand_preference_meta_analysis/"
+sheet_to_open <- "sexmatch_strict_all_split_0s"
+
+# Two sheets can be used:
+# 1. sexmatch_strict_all_split_0s -> This replaces cells with < 5 counts with 0. Note: In this way we are losing Toronto
+# 2. sexmatch_strict_all_split -> This uses all inputs (including < 5 counts)
+
+# TODO
+# 1. Get updated data from TEDS
+
+All_studies <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xlsx'), sheet = sheet_to_open) %>%
+  mutate(Full_cohort = paste(cohort_name, phenotype, sex, sep = "_")) %>%
+  filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
+  filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
+  escalc(measure = "OR", ai = cases_NRH, bi = cases_RH, ci = controls_NRH, di = controls_RH, data = ., append = T, drop00 = T) %>%
+  mutate(across(cohort_type:sex, as.factor)) %>% # Create factors for better analysis
+  filter(complete.cases(.$yi)) %>% # This is to remove values with empty OR as the cases/controls contain at least a cell with < 5
+  mutate(OR = exp(.$yi)) # This is to get the OR
+
+study_names <- All_studies$Full_cohort
+
+# Basic model
+model <- rma(yi = yi, vi = vi, measure = "OR", data = All_studies, method = "ML")
+summary.rma(model) # No heterogeneity highlighted
+exp(model$beta)[,1] # This is the overall OR
+exp(model$ci.lb) # This is the overall OR upper limit
+exp(model$ci.ub) # This is the overall OR lower limit
+metafor::forest.rma(model, annotate = T, atransf = exp,
+                    slab = study_names, showweights = T, header = T, order = "obs")
+metafor::funnel.rma(model)
+metafor::regtest(model) # No plot asymmtry was highlighted
+
+
+# Model with moderator
+# Select one of the two models below
+
+# With -1  we remove the reference to the intercept to better interpret the results
+model <- rma(yi = yi, vi = vi, mods = ~ cohort_type:phenotype:sex -1, measure = "OR", data = All_studies, method = "ML")
+
+# This is to interpret the overall effect of moderators
+# model <- rma(yi = yi, vi = vi, mods = ~ cohort_type + phenotype + sex, measure = "OR", data = All_studies, method = "ML")
+
+summary.rma(model)
+metafor::forest.rma(model, annotate = T, atransf = exp,
+                    slab = study_names, showweights = T, header = T, order = "obs") 
+                    # ilab.xpos = c(+10, +8, +6, +4), cex = .75, addcred = T, 
+                    # ilab = cbind(All_studies$cases_NRH, All_studies$total_cases, All_studies$controls_NRH, All_studies$total_controls))
+# op <- par(cex = .75, font = 0.25)
+# text(c(+10, +8, +6, +4), 23, c("NRH", "Total", "NRH", "Total"))
+# text(c(+10, +6),       24, c("Cases", "Control"))
+# par(op)
+
+metafor::funnel.rma(model)
+metafor::regtest(model) # No plot asymmtry was highlighted
+
