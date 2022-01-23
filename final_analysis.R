@@ -5,13 +5,14 @@ if (!require("metafor",character.only = TRUE)){install.packages("metafor",dep=TR
 # Read file #####
 path <- "~/University of St Andrews/Silvia Paracchini - gen_lang_hand_meta/GenLang_hand_preference_meta_analysis/"
 sheet_to_open_RD <- "MA_RD_MF_cases_new"
-sheet_to_open_DLD <- "MA_DLD_MF_cases_new"
+sheet_to_open_DLD <- "MA_DLD_MF_cases_new" #"MA_DLD_MF_case_new_same_control"
 
 # Use MA_DLD_MF_cases for DLD and MA_RD_MF_cases for RD
 
 All_studies_RD <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xlsx'), sheet = sheet_to_open_RD) %>%
   filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
   filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
+  # filter(cohort_name != "Manchester Language Study") %>% #
   escalc(measure = "OR", ai = cases_NRH, bi = cases_RH, ci = controls_NRH, di = controls_RH, data = ., append = T, drop00 = T) %>%
   mutate(across(cohort_type:phenotype, as.factor)) %>% # Create factors for better analysis
   mutate(OR = exp(.$yi))
@@ -19,23 +20,25 @@ All_studies_RD <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xl
 All_studies_DLD <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xlsx'), sheet = sheet_to_open_DLD) %>%
   filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
   filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
+  # filter(cohort_name != "Manchester Language Study") %>% #
   escalc(measure = "OR", ai = cases_NRH, bi = cases_RH, ci = controls_NRH, di = controls_RH, data = ., append = T, drop00 = T) %>%
   mutate(across(cohort_type:phenotype, as.factor)) %>% # Create factors for better analysis
   mutate(OR = exp(.$yi))
 
 
-study_names <- All_studies_DLD$cohort_name
+study_names_DLD <- All_studies_DLD$cohort_name
+study_names_RD <- All_studies_RD$cohort_name
 
 # Basic model
 model_DLD <- rma(yi = yi, vi = vi, measure = "OR", data = All_studies_DLD, test = 'knha')
 model_RD <- rma(yi = yi, vi = vi, measure = "OR", data = All_studies_RD, test = 'knha')
 summary.rma(model_DLD)
 summary.rma(model_RD)
-exp(model_RD$beta)[,1] # This is the overall OR
-exp(model_RD$ci.lb) # This is the overall OR upper limit
-exp(model_RD$ci.ub) # This is the overall OR lower limit
+exp(model_DLD$beta)[,1] # This is the overall OR
+exp(model_DLD$ci.lb) # This is the overall OR upper limit
+exp(model_DLD$ci.ub) # This is the overall OR lower limit
 metafor::forest.rma(model_DLD, annotate = T, atransf = exp,
-                    slab = study_names, showweights = T, header = F, 
+                    slab = study_names_DLD, showweights = T, header = F, 
                     order = "obs", cex = 0.7, ilab = cbind(as.character(All_studies_DLD$cohort_type), as.character(All_studies_DLD$phenotype), All_studies_DLD$cases_NRH, All_studies_DLD$cases_RH, All_studies_DLD$controls_NRH, All_studies_DLD$controls_RH),
                     ilab.xpos = c(-2.6, -1.4, 2, 2.5, 3, 3.5))
 text(c(-2.6, -1.4), 13, c("Cohort type", "Phenotype"), cex = 0.7)
@@ -45,8 +48,8 @@ text(-5.5, 13, "Cohort name", pos = 4, cex = 0.7)
 text(6, 13, "Odds Ratio [95% CI]", pos = 2, cex = 0.7)
 
 metafor::forest.rma(model_RD, annotate = T, atransf = exp,
-                    slab = study_names, showweights = T, header = F, 
-                    order = "obs", cex = 0.7, ilab = cbind(as.character(All_studies_DLD$cohort_type), as.character(All_studies_DLD$phenotype), All_studies_DLD$cases_NRH, All_studies_DLD$cases_RH, All_studies_DLD$controls_NRH, All_studies_DLD$controls_RH),
+                    slab = study_names_RD, showweights = T, header = F, 
+                    order = "obs", cex = 0.7, ilab = cbind(as.character(All_studies_RD$cohort_type), as.character(All_studies_RD$phenotype), All_studies_RD$cases_NRH, All_studies_RD$cases_RH, All_studies_RD$controls_NRH, All_studies_RD$controls_RH),
                     ilab.xpos = c(-3.2, -1.6, 2.5, 3, 3.5, 4))
 text(c(-3.2, -1.6), 13, c("Cohort type", "Phenotype"), cex = 0.7)
 text(c(2.5, 3, 3.5, 4), 13, c("NRH", "RH", "NRH", "RH"), cex = 0.7)
