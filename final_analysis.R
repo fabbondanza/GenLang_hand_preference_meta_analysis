@@ -3,7 +3,7 @@ if (!require("readxl",character.only = TRUE)){install.packages("readxl",dep=TRUE
 if (!require("metafor",character.only = TRUE)){install.packages("metafor",dep=TRUE)}
 
 # Read file #####
-path <- "~/University of St Andrews/Silvia Paracchini - gen_lang_hand_meta/GenLang_hand_preference_meta_analysis/"
+path <- "/Users/filippoabbondanza/Library/CloudStorage/OneDrive-SharedLibraries-UniversityofStAndrews/Silvia Paracchini - gen_lang_hand_meta/GenLang_hand_preference_meta_analysis/"
 sheet_to_open_RD <- "MA_RD_MF_cases_new"
 sheet_to_open_DLD <- "MA_DLD_MF_cases_new" #"MA_DLD_MF_case_new_same_control"
 
