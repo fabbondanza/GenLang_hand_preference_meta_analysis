@@ -4,8 +4,8 @@ if (!require("metafor",character.only = TRUE)){install.packages("metafor",dep=TR
 
 # Read file #####
 path <- "Documents/PhD/GenLang_hand_preference_meta_analysis/"
-sheet_to_open_RD <- "MA_RD_MF_cases_new_TEDS_new" # MA_RD_MF_cases_new_TEDS_new
-sheet_to_open_DLD <- "MA_DLD_MF_cases_new_TEDS_new" #"MA_DLD_MF_case_new_same_control"
+sheet_to_open_RD <- "MA_RD_MF_cases_new_TED_MAN_new" # MA_RD_MF_cases_new_TEDS_new
+sheet_to_open_DLD <- "MA_DLD_MF_cases_new_TED_MAN_new" #"MA_DLD_MF_case_new_same_control"
 
 # Use MA_DLD_MF_cases for DLD and MA_RD_MF_cases for RD
 
@@ -20,8 +20,8 @@ All_studies_RD <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xl
   mutate(OR = exp(.$yi))
 
 All_studies_DLD <- readxl::read_excel(paste0(path,'genlang_all_cohorts_updated.xlsx'), sheet = sheet_to_open_DLD) %>%
-  filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
-  filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
+  # filter(cohort_name != "Multicenter Study Marburg/Würzburg cohort") %>% # This study did not pass inclusion criteria
+  # filter(cohort_name != "NTR cohort") %>% # This study did not pass inclusion criteria
   # filter(cohort_name != "Manchester Language Study") %>% #
   # filter(cohort_name != "UKDYS cohort") %>% #
   escalc(measure = "OR", ai = cases_NRH, bi = cases_RH, ci = controls_NRH, di = controls_RH, data = ., append = T, drop00 = T) %>%
@@ -51,11 +51,11 @@ metafor::forest.rma(model_DLD, annotate = T, atransf = exp,
                     slab = study_names_DLD, showweights = T, header = F, 
                     order = "obs", cex = 0.7, ilab = cbind(as.character(All_studies_DLD$cohort_type), as.character(All_studies_DLD$phenotype), All_studies_DLD$cases_NRH, All_studies_DLD$cases_RH, All_studies_DLD$controls_NRH, All_studies_DLD$controls_RH),
                     ilab.xpos = c(-2.6, -1.4, 2, 2.5, 3, 3.5))
-text(c(-2.6, -1.4), 11, c("Cohort type", "Phenotype"), cex = 0.7)
-text(c(2, 2.5, 3, 3.5), 11, c("NRH", "RH", "NRH", "RH"), cex = 0.7)
-text(c(2.25, 3.25), 12, c("Cases", "Controls"), cex = 0.7)
-text(-5.5, 11, "Cohort name", pos = 4, cex = 0.7)
-text(6, 11, "Odds Ratio [95% CI]", pos = 2, cex = 0.7)
+text(c(-2.6, -1.4), 13, c("Cohort type", "Phenotype"), cex = 0.7)
+text(c(2, 2.5, 3, 3.5), 13, c("NRH", "RH", "NRH", "RH"), cex = 0.7)
+text(c(2.25, 3.25), 14, c("Cases", "Controls"), cex = 0.7)
+text(-5.5, 13, "Cohort name", pos = 4, cex = 0.7)
+text(6, 13, "Odds Ratio [95% CI]", pos = 2, cex = 0.7)
 
 metafor::forest.rma(model_RD, annotate = T, atransf = exp,
                     slab = study_names_RD, showweights = T, header = F, 
